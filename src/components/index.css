@@ -1,0 +1,117 @@
+
+
+nav{
+    background-color: #9546CE;
+ 
+}
+
+img.infor-content{
+    width: 70%;
+}
+
+a.nav-link {
+    color: #ffffff;
+   font-size: 18px;
+}
+
+.nav-link :hover{
+    color: #fff;
+   font-size: 18px;
+}
+
+span.navbar-brand{
+    font-size: 16px;
+    color: #fff;
+}
+
+button.btnprimary {
+    font-size: 18px;
+    width: 300px;
+    height: 40px;
+    border: none;
+    background-color:#673382 ;
+}
+button.btnprimary :hover {
+    border: none;
+    background-color:#673382 ;
+}
+.headding{
+    background-color: #fff;
+}
+.course-item{
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 12px;
+}
+
+img.infor-item {
+    display: block;
+    margin: 0 auto;
+}
+#dropdown-basic-button{
+    width: 100%;
+}
+.file-views{
+    margin-bottom: 20px;
+    height: auto;
+    border: 1px solid #673382;
+}
+
+.video-react-poster{
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+.dropdown-menu.show {
+border-radius: 0px;
+background-color: #673382;
+}
+a.dropdown-item{
+    font-size: 18px;
+    color: #fff;
+}
+.menu-group-items.card{
+
+    cursor: pointer;
+
+    color: #673382;
+    background-color: #ffffff;
+}
+.menu-group-items.card :hover{
+   transition-delay: .5;
+   transition: all;
+    color: #ffffff;
+    background-color: #a979c2;
+}
+.video-react-poster {
+    border-radius: 12px;
+}
+.group-line{
+    background-color: #fff;
+    padding: 12px;
+    border: solid #e7e7e7  1px ;
+}
+.cancel-btn{
+    color: #a979c2;
+    float: right;
+}
+#error{
+   
+    color: red;
+}
+a .nav-link :hover{
+    color: #fff;
+}
+.message{
+    color: #673382;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+    text-align: center;
+    padding: 12px;
+    height: auto;
+    background-color: #fff;
+    border: solid  #673382 2px;
+    border-style: dashed;
+}
+

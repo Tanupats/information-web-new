@@ -1,0 +1,23 @@
+
+* {
+  margin: 0 ;
+  padding: 0 ;
+  box-sizing: border-box;
+}body{
+  font-family: 'Kanit', sans-serif;
+  background-color: #F8F8F8;
+}
+div.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+div.row {
+  margin-right: 0px;
+  margin-left: 0px
+}
+.footer{
+
+  color: #fff;
+  background-color: #673382;
+}
