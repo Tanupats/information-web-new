@@ -15,33 +15,41 @@ const Register = () => {
   const [errMsg, setErrMsg] = useState("");
   const [img, setImg] = useState("");
 
-   function add  ()  {
 
-    // let formData = new FormData();
-    // formData.append("photo", profile);
-    // formData.append("name", name);
-    // formData.append("email", email);
-    // formData.append("password", password);
-    // formData.append("systemName", "information");
-    // formData.append("role", role);
+  let path = "";
+  const uploadProfile = async () => {
 
+    let formData = new FormData();
+    formData.append("file", profile);
+
+    await axios.post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData)
+      .then((res) => {
+        path = res.data.path
+        console.log(res)
+      })
+  }
+
+
+  const add = async () => {
+
+    await uploadProfile()
     const body = {
       name: name,
       email: email,
-      profile: "oop",
+      profile: path,
       password: password,
       role: role,
-      systemName:"information"
+      systemName: "information"
     }
 
     axios
-      .post(`${import.meta.env.VITE_BASE_URL}/users/index.php`,body)
-      .then((res)=>{
-        if(res.status===200){
+      .post(`${import.meta.env.VITE_BASE_URL}/users/index.php`, body)
+      .then((res) => {
+        if (res.status === 200) {
           navigae('/login')
         }
       })
-   
+
 
   };
 

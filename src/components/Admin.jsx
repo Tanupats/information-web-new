@@ -95,11 +95,12 @@ const Admin = () => {
     setForId(id);
     await axios
       .get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${id}`)
-      .then((response) => {
+      .then(response => {
         if (response.status === 200) {
-          setinformationName(response.data.informationName);
-          setDetail(response.data.detail);
-          setFileName(response.data.sources);
+          console.log(response)
+          setinformationName(response.data[0].informationName);
+          setDetail(response.data[0].detail);
+          setFileName(response.data[0].sources);
         }
       });
 
@@ -108,24 +109,20 @@ const Admin = () => {
 
   //แก้ไขสารสนเทศ
   const updateInfor = async () => {
-    const body = {
-      detail: detail,
-      informationName: informationName,
-    };
 
-    await axios.put(
-      `${import.meta.env.VITE_BASE_URL}/information/idex.php?id=${forId}`,
-      body
-    );
 
     if (fileNew) {
       let formData = new FormData();
-      formData.append("photo", fileNew);
-      formData.append("pathFile", fileName);
+      let pathname = "";
+      formData.append("file", fileNew);
 
-      //update file
+      //delete file old 
+
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${fileName}`)
+
+      //upload new file
       await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/updatefile/${forId}`,
+        `${import.meta.env.VITE_BASE_URL}/file/index.php`,
         formData,
         {
           onUploadProgress: (event) => {
@@ -138,10 +135,38 @@ const Admin = () => {
             }
           },
         }
+      ).then(res => {
+        pathname = res.data.path;
+        console.log(res)
+      })
+
+      const body = {
+        sources: pathname,
+
+      };
+      //update information again 
+      await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/information/updatefile.php?id=${forId}`,
+        body
+      );
+
+
+    } else {
+      const body = {
+        detail: detail,
+        informationName: informationName,
+      };
+
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${forId}`, body
       );
     }
 
-    getAllInformations();
+
+
+    handleClose();
+    //getinformationas 
+    await getAllInformations();
+
   };
 
   //update sub name
@@ -149,7 +174,7 @@ const Admin = () => {
     const body = { subname: subNameUpdate };
     await axios
       .put(
-        `${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?=${subId}`,
+        `${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?id=${subId}`,
         body
       )
       .then((response) => {
@@ -162,7 +187,8 @@ const Admin = () => {
   };
 
   //ลบข้อมูลสารสนเทศ
-  const deleteInformationId = async (id) => {
+  const deleteInformationId = async (id, path, poster) => {
+
     Swal.fire({
       title: "ต้องการลบข้อมูล หรือ ไม่?",
       icon: "warning",
@@ -181,7 +207,13 @@ const Admin = () => {
               getAllInformations();
             }
           });
+
+        //delete file 
+        axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${path}`)
+        axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${poster}`)
       }
+
+
     });
   };
 
@@ -202,11 +234,12 @@ const Admin = () => {
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูล!", "ลบข้อมูลสำเร็จ", "success");
-              getsubInformationID(typeName);
+
             }
           });
       }
     });
+    await getsubInformationID(typeName);
   };
 
   //ลบข้อมูลกลุ่มสารสนเทศ
@@ -342,7 +375,7 @@ const Admin = () => {
     getsubInformation();
   }, []);
 
-  useEffect(() => {}, [informations]);
+  useEffect(() => { }, [informations]);
 
   return (
     <div>
@@ -354,9 +387,7 @@ const Admin = () => {
                 <Image
                   style={{ width: "80px", height: "80px", objectFit: "cover" }}
                   src={
-                    import.meta.env.VITE_BASE_URL +
-                    "/uploads/" +
-                    localStorage.getItem("profile")
+                    `${import.meta.env.VITE_BASE_URL}/${localStorage.getItem("profile")}`
                   }
                 />
                 <h6>{localStorage.getItem("name")}</h6>
@@ -504,7 +535,7 @@ const Admin = () => {
                           >
                             {" "}
 
-                           <AddCircleOutlineIcon />  เพิ่มข้อมูล
+                            <AddCircleOutlineIcon />  เพิ่มข้อมูล
                           </Button>
                         </Col>
                       </Row>
@@ -608,7 +639,7 @@ const Admin = () => {
                             style={{ marginTop: "32px" }}
                           >
                             {" "}
-                         
+
                             <AddCircleOutlineIcon />    เพิ่มข้อมูล{" "}
                           </Button>
                         </Col>

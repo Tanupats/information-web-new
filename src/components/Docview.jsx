@@ -11,8 +11,8 @@ function Docview(prpos) {
   const getFile = async ()=>{
         await axios.get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${Id}`).then(res=>{
           if(res.status===200){
-            console.log(res.data.sources)
-            setPath(res.data.sources)
+            console.log(res.data[0].sources)
+            setPath(res.data[0].sources)
           }
         })
   }

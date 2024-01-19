@@ -37,15 +37,18 @@ const Information = () => {
       });
   };
 
+
   const getSubInformationType = async (id) => {
     await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`)
+      .get(`${import.meta.env.VITE_BASE_URL}/informationType/informationTypeId.php?id=${id}`)
       .then((res) => {
         if (res.status === 200) {
+          console.log(res.data)
           setInforGroup(res.data);
         }
       });
   };
+
 
   const getAllInformations = async () => {
     setInforGroup([]);
@@ -58,24 +61,24 @@ const Information = () => {
       });
   };
 
+
   const searchInformation = async () => {
-    const body = { keyword: searchName };
+
     await axios
-      .post(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${body}`)
+      .get(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${searchName}`)
       .then((res) => {
         if (res.status === 200) {
           setData(res.data);
         }
       });
   };
+
+
 
   const searchByInformation = async (subname) => {
-    const body = { subname: subname };
     await axios
-      .post(
-        `${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${body}`,
-        body
-      )
+      .get(
+        `${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${subname}`)
       .then((res) => {
         if (res.status === 200) {
           setData(res.data);
@@ -83,16 +86,18 @@ const Information = () => {
       });
   };
 
+
   const filterByGroup = async (groupname) => {
-    const body = { group: groupname };
     await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${body}`, )
+      .get(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${groupname}`)
       .then((res) => {
         if (res.status === 200) {
           setData(res.data);
         }
       });
   };
+
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -108,7 +113,10 @@ const Information = () => {
     getAllInformations();
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+
+    console.log(inforGroup)
+  }, []);
 
   return (
     <>
@@ -208,17 +216,17 @@ const Information = () => {
                 <Form.Group>
                   <Form.Label>แสดงจากหมวดหมู่</Form.Label>
                   <Col>
-                   <h4>
-                  <Badge
-                    style={{
-                      fontWeight: "normal",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => getAllInformations()}
-                  >
-                    แสดงทั้งหมด
-                  </Badge>
-                   </h4>
+                    <h4>
+                      <Badge
+                        style={{
+                          fontWeight: "normal",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => getAllInformations()}
+                      >
+                        แสดงทั้งหมด
+                      </Badge>
+                    </h4>
                   </Col>
                   {informationType?.map((item) => {
                     return (
