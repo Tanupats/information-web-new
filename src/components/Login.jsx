@@ -24,6 +24,7 @@ const Login = () => {
     const body = {
       email: email,
       password: password,
+      systemName: "information"
     };
     axios
       .post(`${import.meta.env.VITE_BASE_URL}/login/index.php`, body)
