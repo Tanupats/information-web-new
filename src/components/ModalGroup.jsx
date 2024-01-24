@@ -10,8 +10,8 @@ const ModalGroup = (props) => {
   const updateGroup = async () => {
     props.onHide();
     const body = { typeName: name }
-    await axios
-      .put(`${import.meta.env.VITE_BASE_URL}/informationType/index.php?id=${Id}`, body)
+    await fetch(`http://localhost/leadkku-api/informationType/index.php?id=${Id}`, { method: 'PUT', body: body })
+      .then(response => response.json())
       .then((response) => {
         if (response.status === 200) {
           Swal.fire(

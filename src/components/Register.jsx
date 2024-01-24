@@ -22,11 +22,27 @@ const Register = () => {
     let formData = new FormData();
     formData.append("file", profile);
 
-    await axios.post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData)
-      .then((res) => {
-        path = res.data.path
-        console.log(res)
-      })
+    // await axios.post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData)
+    //   .then((res) => {
+    //     path = res.data.path
+    //     console.log(res)
+    //   })
+
+    try {
+      await fetch("http://localhost/leadkku-api/file/index.php", {
+        method: "POST",
+        body: formData,
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+          path = data.path
+        }
+
+        )
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
   }
 
 
@@ -42,14 +58,33 @@ const Register = () => {
       systemName: "information"
     }
 
-    axios
-      .post(`${import.meta.env.VITE_BASE_URL}/users/index.php`, body)
-      .then((res) => {
-        if (res.status === 200) {
-          navigae('/login')
+    // axios
+    //   .post(`${import.meta.env.VITE_BASE_URL}/users/index.php`, body)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       navigae('/login')
+    //     }
+    //   })
+    try {
+      await fetch("http://localhost/leadkku-api/users/index.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+          if (data) {
+            navigae('/login')
+          }
         }
-      })
 
+
+        )
+    } catch (error) {
+      console.error("Error:", error);
+    }
 
   };
 

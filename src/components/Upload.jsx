@@ -147,13 +147,28 @@ const Upload = (props) => {
 
       let formData = new FormData();
       formData.append("file", filePoster);
-      await axios
-        .post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData)
-        .then((res) => {
-          if (res.status === 200) {
-            pathPoster = res.data.path;
+      // await axios
+      //   .post(`https://www.sasirestuarant.com/leadkku-api/file/index.php`, formData)
+      //   .then((res) => {
+      //     if (res.status === 200) {
+      //       pathPoster = res.data.path;
+      //     }
+      //   });
+
+      try {
+        await fetch("http://localhost/leadkku-api/file/index.php", {
+          method: "POST",
+          body: formData,
+        }).then(respone => respone.json())
+          .then((data) => {
+            console.log(data)
+            pathPoster = data.path
           }
-        });
+
+          )
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -161,20 +176,42 @@ const Upload = (props) => {
     let formData = new FormData();
     formData.append("file", file);
 
-    await axios
-      .post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData, {
+    // await axios
+    //   .post(`https://www.sasirestuarant.com/leadkku-api/file/index.php`, formData, {
+    //     onUploadProgress: (event) => {
+    //       setProgressBar(Math.round((100 * event.loaded) / event.total));
+    //       if (event.loaded === event.total) {
+    //         Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
+    //       }
+    //     },
+    //   })
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       pathFile = res.data.path;
+    //     }
+    //   });
+    try {
+      await fetch("http://localhost/leadkku-api/file/index.php", {
+        method: "POST",
+        body: formData,
         onUploadProgress: (event) => {
           setProgressBar(Math.round((100 * event.loaded) / event.total));
           if (event.loaded === event.total) {
             Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
           }
-        },
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          pathFile = res.data.path;
         }
-      });
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+          pathPoster = data.path
+        }
+
+        )
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+
   };
 
   const validateSelectedFile = (file) => {
@@ -216,13 +253,32 @@ const Upload = (props) => {
       sources: pathFile,
     };
 
-    await axios.post(`${import.meta.env.VITE_BASE_URL}/information/index.php`, body)
-      .then(res => {
-        if (res.status === 200) {
-          onUploaded()
+    // await axios.post(`http://localhost/leadkku-api/information/index.php`, body)
+    //   .then(res => {
+    //     if (res.status === 200) {
+    //       onUploaded()
+    //     }
+    //   })
+    //   ;
+
+    
+    try {
+      fetch("http://localhost/leadkku-api/information/index.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+         
         }
-      })
-      ;
+        )
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
     await getAllInformations();
 
   };
@@ -235,18 +291,13 @@ const Upload = (props) => {
       setTypeName([...typeName, { id: typeName.length + 1, name: typename }]);
 
       let result = typeName.filter(obj => obj.name === typename)
-      console.log('re', result)
+
       if (result.length > 0) {
         let newdata = typeName.filter(ob => ob.name !== typename)
-        console.log('new data', newdata)
+
         setTypeName(newdata)
       }
-
-
     }
-
-
-
 
   };
 
@@ -272,7 +323,7 @@ const Upload = (props) => {
 
       })
       setTypeAll(nameList)
-      console.log('all', nameList)
+
     }
   }
 
@@ -281,12 +332,6 @@ const Upload = (props) => {
     getTypeAll()
 
   }, [typeName])
-
-  console.log('tname', typeName)
-  // console.log(subName); 
-  // console.log(informationName);
-  // console.log(fileType);
-  // console.log(detail);
 
   return (
     <>

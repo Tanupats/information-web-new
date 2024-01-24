@@ -1,7 +1,7 @@
-import React, {  useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   Col,
-  Row,  
+  Row,
   Form,
   Button,
   Image,
@@ -10,46 +10,55 @@ import {
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { AuthData } from "../AuthContext";
-import axios from "axios";
 const Login = () => {
   const { setIsLogin } = useContext(AuthData);
   const navigae = useNavigate();
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message,setMessage] = useState("")
+  const [message, setMessage] = useState("")
 
-  const handelSubmit = (event) => {
-    event.preventDefault();
-    const body = {
+  async  function handelSubmit (){
+   
+    const data = {
       email: email,
       password: password,
-      systemName: "information"
+      systemName:"information"
     };
-    axios
-      .post(`${import.meta.env.VITE_BASE_URL}/login/index.php`, body)
-      .then((res) => {
-        if (res.status === 200) {
-         
-          const { name, userId, role,profile } = res.data[0];
 
-          
-          localStorage.setItem("name", name);
-          localStorage.setItem("userId", userId);
-          localStorage.setItem("auth", "loginged");
-          localStorage.setItem("role", role);
-          localStorage.setItem("profile", profile);
-          setIsLogin("loginged");
-          navigae("/information");
-          
-        }
-      }).catch(err=>{
-          if(err){
-             setMessage("รหัสผ่าน หรือ อีเมลไม่ถูกต้อง")
+    try {
+     await fetch("http://localhost/leadkku-api/login/index.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+          if(data.length>0){
+            setIsLogin("loginged")
+            localStorage.setItem("name",data[0].name)
+            localStorage.setItem("profile",data[0].profile)
+            if(data[0].role==="student"){
+              navigae('/information')
+            }
+            if(data[0].role==="admin"){
+              navigae('/admin')
+            }
+            
           }
-         
-      })
+          if(data.length===0){
+            setMessage("login false")
+          }
+        }
       
+
+        )
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
   };
 
   return (
@@ -66,7 +75,7 @@ const Login = () => {
                 />
               </Col>
               <Col sm={6}>
-                <Form className="section-form" onSubmit={handelSubmit}>
+                <Form className="section-form" >
                   <h4 className="text-center mt-4" style={{ color: '#673382' }}> เข้าสู่ระบบ</h4>
 
                   <Form.Group className="mb-4">
@@ -90,13 +99,14 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Form.Group>
-                
-                     { message !== "" &&  (  <Alert variant="danger" className="mt-4">{message}</Alert>)}
-                    
 
-                 
+                  {message !== "" && (<Alert variant="danger" className="mt-4">{message}</Alert>)}
+
+
+
                   <Button
-                    type="submit"
+                    onClick={()=>handelSubmit()}
+                    
                     variant="success"
                     className="w-100 mt-2"
                   >
@@ -104,17 +114,17 @@ const Login = () => {
                   </Button>
                 </Form>
 
-                        <div className="text-center mt-2">
-                         <p>หรือ </p>
-                        </div>
-                     <Button variant="primary" 
-                     className="w-100"
-                     onClick={()=> navigae("/register")} >
-                      ลงทะเบียน</Button>
-               
-             
-               
-            
+                <div className="text-center mt-2">
+                  <p>หรือ </p>
+                </div>
+                <Button variant="primary"
+                  className="w-100"
+                  onClick={() => navigae("/register")} >
+                  ลงทะเบียน</Button>
+
+
+
+
               </Col>
             </Row>
           </div>

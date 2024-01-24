@@ -93,23 +93,27 @@ const Admin = () => {
   //show modal for update information
   const handleShow = async (id) => {
     setForId(id);
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${id}`)
-      .then(response => {
-        if (response.status === 200) {
-          console.log(response)
-          setinformationName(response.data[0].informationName);
-          setDetail(response.data[0].detail);
-          setFileName(response.data[0].sources);
-        }
-      });
-
-    setShow(true);
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${id}`)
+    //   .then(response => {
+    //     if (response.status === 200) {
+    //       console.log(response)
+    //       setinformationName(response.data[0].informationName);
+    //       setDetail(response.data[0].detail);
+    //       setFileName(response.data[0].sources);
+    //     }
+    //   });
+    const response = await fetch(`http://localhost/leadkku-api/information/InformationId.php?id=${id}`);
+    const data = await response.json();
+    console.log(data);
+    setinformationName(data[0].informationName);
+    setDetail(data[0].detail);
+    setFileName(data[0].sources);
+    setShow(true)
   };
 
   //แก้ไขสารสนเทศ
   const updateInfor = async () => {
-
 
     if (fileNew) {
       let formData = new FormData();
@@ -117,37 +121,66 @@ const Admin = () => {
       formData.append("file", fileNew);
 
       //delete file old 
+      await fetch(`http://localhost/leadkku-api/file/index.php?filename=${fileName}`,
+        { method: 'DELETE' }
+      )
 
-      await axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${fileName}`)
+
 
       //upload new file
-      await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/file/index.php`,
-        formData,
-        {
+      // await axios.post(
+      //   `${import.meta.env.VITE_BASE_URL}/file/index.php`,
+      //   formData,
+      //   {
+      //     onUploadProgress: (event) => {
+      //       setProgressBar(Math.round((100 * event.loaded) / event.total));
+
+      //       if (event.loaded === event.total) {
+      //         Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
+      //         handleClose();
+      //         setProgressBar(0);
+      //       }
+      //     },
+      //   }
+      // ).then(res => {
+      //   pathname = res.data.path;
+      //   console.log(res)
+      // })
+
+      try {
+        await fetch("http://localhost/leadkku-api/file/index.php", {
+          method: "POST",
+          body: formData,
           onUploadProgress: (event) => {
             setProgressBar(Math.round((100 * event.loaded) / event.total));
-
             if (event.loaded === event.total) {
               Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
-              handleClose();
-              setProgressBar(0);
             }
-          },
-        }
-      ).then(res => {
-        pathname = res.data.path;
-        console.log(res)
-      })
+          }
+        }).then(respone => respone.json())
+          .then((data) => {
+            console.log(data)
+            pathname = data.path
+          }
+
+          )
+      } catch (error) {
+        console.error("Error:", error);
+      }
 
       const body = {
         sources: pathname,
 
       };
       //update information again 
-      await axios.put(
-        `${import.meta.env.VITE_BASE_URL}/information/updatefile.php?id=${forId}`,
-        body
+
+      await fetch(`http://localhost/leadkku-api/information/updatefile.php?id=${forId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "PUT", body: JSON.stringify(body)
+        }
       );
 
 
@@ -157,15 +190,27 @@ const Admin = () => {
         informationName: informationName,
       };
 
-      await axios.put(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${forId}`, body
-      );
+      fetch(`http://localhost/leadkku-api/information/index.php?id=${forId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(body)
+      }
+
+      ).then((res) => {
+        if (res.status === 200) {
+          getAllInformations();
+          Swal.fire("แก้ไขข้อมูล", "แก้ไขข้อมูลสำเร็จ", "success");
+
+        }
+      })
+
     }
-
-
 
     handleClose();
     //getinformationas 
-    await getAllInformations();
+
 
   };
 
@@ -199,8 +244,8 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${id}`)
+        fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${id}`, { method: 'DELETE' })
+          .then(response => response.json())
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูลสำเร็จ", "success");
@@ -209,8 +254,8 @@ const Admin = () => {
           });
 
         //delete file 
-        axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${path}`)
-        axios.delete(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${poster}`)
+        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${path}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${poster}`, { method: 'DELETE' })
       }
 
 
@@ -269,47 +314,68 @@ const Admin = () => {
 
   //ดึงข้อมูลกลุ่มสารสนเทศ
   const getInformationType = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
-      .then((res) => {
-        if (res.status === 200) {
-          setInformationType(res.data);
-        }
-      });
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setInformationType(res.data);
+    //     }
+    //   });
+    const response = await fetch("http://localhost/leadkku-api/informationType/index.php");
+    const data = await response.json();
+    setInformationType(data);
   };
 
   //ดึงข้อมูลสารสนเทศทั้งหมด
   const getAllInformations = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
-      .then((res) => {
-        if (res.status === 200) {
-          setInformations(res.data);
-        }
-      });
+
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setInformations(res.data);
+    //     }
+    //   });
+
+    const response = await fetch("http://localhost/leadkku-api/information/index.php");
+    const data = await response.json();
+    setInformations(data);
+
   };
 
   //ดึงข้อมูลประเภทย่อยทั้งหมด
   const getsubInformation = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`)
-      .then((res) => {
-        if (res.status === 200) {
-          setType(res.data);
-        }
-      });
+
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setType(res.data);
+    //     }
+    //   });
+
+    const response = await fetch("http://localhost/leadkku-api/subinformationType/index.php");
+    const data = await response.json();
+    setType(data);
+
   };
 
   //ดึงข้อมูลประเภทย่อยจาก id
   const getsubInformationID = async (id) => {
+
     setTypeName(id);
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`)
-      .then((res) => {
-        if (res.status === 200) {
-          setType(res.data);
-        }
-      });
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setType(res.data);
+    //     }
+    //   });
+
+    const response = await fetch(`http://localhost/leadkku-api/subinformationType/informationTypeId.php?id=${id}`);
+    const data = await response.json();
+    setType(data);
+
   };
 
   //เลือกเมนูต่าง ๆ
@@ -322,10 +388,12 @@ const Admin = () => {
 
   //เพิ่มข้อมูลประเภทย่อย ในหมวดหมู่
   const addSubtype = async () => {
+
     if (subNameType !== "") {
       const body = { informationTypeId: typeName, subname: subNameType };
-      await axios
-        .post(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`, body)
+      await fetch(`http://localhost/subinformationType/index.php`,
+        { method: 'POST', body: body })
+        .then(response => response.json())
         .then((res) => {
           if (res.status === 200) {
             Swal.fire({
@@ -337,6 +405,7 @@ const Admin = () => {
         });
       await getsubInformationID(typeName);
     }
+
   };
 
   //เพิ่มหมวดหมู่สารสนเทศ
@@ -344,8 +413,9 @@ const Admin = () => {
     if (inforName !== "") {
       const body = { typeName: inforName };
 
-      await axios
-        .post(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`, body)
+      await fetch(`http://localhost/informationType/index.php`,
+        { method: 'POST', body: body })
+        .then(response = response.json())
         .then((res) => {
           if (res.status === 200) {
             Swal.fire({

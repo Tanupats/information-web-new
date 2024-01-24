@@ -97,7 +97,7 @@ function NavbarMenu() {
           </Container>
         </Navbar>
 
-        <Routes>
+        <Routes basename={'/login'}>
           <Route path="/" Component={Home}></Route>
           <Route path="/admin" Component={Admin}></Route>
           <Route path="/login" Component={Login}></Route>

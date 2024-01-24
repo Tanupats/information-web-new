@@ -6,7 +6,6 @@ import {
   Container,
   Form,
   Button,
-  Alert,
   Badge,
   Image,
 } from "react-bootstrap";
@@ -28,73 +27,106 @@ const Information = () => {
 
   //กลุ่มประเภทสารสนเทศ
   const getInformationType = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
-      .then((res) => {
-        if (res.status === 200) {
-          setInformationType(res.data);
-        }
-      });
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setInformationType(res.data);
+    //     }
+    //   });
+
+      const response = await fetch(`http://localhost/leadkku-api/informationType/index.php`);
+      const data = await response.json();
+      console.log(data);
+      setInformationType(data);
   };
 
 
   const getSubInformationType = async (id) => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/informationType/informationTypeId.php?id=${id}`)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res.data)
-          setInforGroup(res.data);
-        }
-      });
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/informationTypeId.php?id=${id}`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       console.log(res.data)
+    //       setInforGroup(res.data);
+    //     }
+    //   });
+
+      const response = await fetch(`http://localhost/leadkku-api/informationType/informationTypeId.php?id=${id}`);
+      const data = await response.json();
+      console.log(data);
+      setInforGroup(data);
   };
 
 
   const getAllInformations = async () => {
     setInforGroup([]);
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
-      .then((res) => {
-        if (res.status === 200) {
-          setData(res.data);
-        }
-      });
+
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setData(res.data);
+    //     }
+    //   });
+
+    const response = await fetch("http://localhost/leadkku-api/information/index.php");
+    const movies = await response.json();
+    console.log(movies);
+    setData(movies);
+
   };
 
 
   const searchInformation = async () => {
 
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${searchName}`)
-      .then((res) => {
-        if (res.status === 200) {
-          setData(res.data);
-        }
-      });
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${searchName}`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setData(res.data);
+    //     }
+    //   });
+
+      const response = await fetch(`http://localhost/leadkku-api/information/searchKey.php?key=${searchName}`);
+      const data = await response.json();
+      console.log(data);
+      setData(data);
+  
   };
 
 
 
   const searchByInformation = async (subname) => {
-    await axios
-      .get(
-        `${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${subname}`)
-      .then((res) => {
-        if (res.status === 200) {
-          setData(res.data);
-        }
-      });
+    // await axios
+    //   .get(
+    //     `${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${subname}`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setData(res.data);
+    //     }
+    //   });
+      const response = await fetch(`http://localhost/leadkku-api/information/searchByInformation.php?subname=${subname}`);
+      const data = await response.json();
+      console.log(data);
+      setData(data);
   };
 
 
   const filterByGroup = async (groupname) => {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${groupname}`)
-      .then((res) => {
-        if (res.status === 200) {
-          setData(res.data);
-        }
-      });
+
+    // await axios
+    //   .get(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${groupname}`)
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       setData(res.data);
+    //     }
+    //   });
+      const response = await fetch(`http://localhost/leadkku-api/information/filterGroup.php?group=${groupname}`);
+      const data = await response.json();
+      console.log(data);
+      setData(data);
+
   };
 
 
