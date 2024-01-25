@@ -10,8 +10,11 @@ const ModalGroup = (props) => {
   const updateGroup = async () => {
     props.onHide();
     const body = { typeName: name }
-    await fetch(`http://localhost/leadkku-api/informationType/index.php?id=${Id}`, { method: 'PUT', body: body })
-      .then(response => response.json())
+    await fetch(`http://localhost/leadkku-api/informationType/index.php?id=${Id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      })
       .then((response) => {
         if (response.status === 200) {
           Swal.fire(
@@ -26,9 +29,7 @@ const ModalGroup = (props) => {
 
 
   useEffect(() => {
-
   }, [])
-
 
   return (
     <>

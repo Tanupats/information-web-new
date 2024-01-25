@@ -10,7 +10,7 @@ function Context({children}){
     const [message,setMessage] = useState("test");
     const [isLogin,setIsLogin] = useState(auth || 'nologin');
 
-    console.log('from con',isLogin)
+    
     return (
         <AuthData.Provider 
             value={{message,setMessage,isLogin,setIsLogin}}>

@@ -18,16 +18,16 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("")
 
-  async  function handelSubmit (){
-   
+  async function handelSubmit() {
+
     const data = {
       email: email,
       password: password,
-      systemName:"information"
+      systemName: "information"
     };
 
     try {
-     await fetch("http://localhost/leadkku-api/login/index.php", {
+      await fetch("http://localhost/leadkku-api/login/index.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,23 +36,25 @@ const Login = () => {
       }).then(respone => respone.json())
         .then((data) => {
           console.log(data)
-          if(data.length>0){
+          if (data.length > 0) {
             setIsLogin("loginged")
-            localStorage.setItem("name",data[0].name)
-            localStorage.setItem("profile",data[0].profile)
-            if(data[0].role==="student"){
+            localStorage.setItem("name", data[0].name)
+            localStorage.setItem("profile", data[0].profile)
+            localStorage.setItem("role", data[0].role)
+            localStorage.setItem("auth","loginged")
+            if (data[0].role === "student") {
               navigae('/information')
             }
-            if(data[0].role==="admin"){
+            if (data[0].role === "admin") {
               navigae('/admin')
             }
-            
+
           }
-          if(data.length===0){
+          if (data.length === 0) {
             setMessage("login false")
           }
         }
-      
+
 
         )
     } catch (error) {
@@ -105,8 +107,8 @@ const Login = () => {
 
 
                   <Button
-                    onClick={()=>handelSubmit()}
-                    
+                    onClick={() => handelSubmit()}
+
                     variant="success"
                     className="w-100 mt-2"
                   >

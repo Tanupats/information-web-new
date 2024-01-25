@@ -49,7 +49,7 @@ const Admin = () => {
   const [informationName, setinformationName] = useState("");
   //หมวดหมู่สารสนเทศ
   const [informationType, setInformationType] = useState([]);
-  const [typeName, setTypeName] = useState("สารสนเทศแบ่งตามหลักสูตร");
+  const [typeName, setTypeName] = useState("");
   //ประเภทย่อย
   const [subType, setType] = useState([]);
 
@@ -72,6 +72,7 @@ const Admin = () => {
   const handleCloseInfor = () => setShowInfor(false);
   const handleCloseGroup = () => setShowGroup(false);
 
+
   const handleShowInfor = (id, subname) => {
     setsubId(id);
     setsubNameUpdate(subname);
@@ -93,16 +94,6 @@ const Admin = () => {
   //show modal for update information
   const handleShow = async (id) => {
     setForId(id);
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${id}`)
-    //   .then(response => {
-    //     if (response.status === 200) {
-    //       console.log(response)
-    //       setinformationName(response.data[0].informationName);
-    //       setDetail(response.data[0].detail);
-    //       setFileName(response.data[0].sources);
-    //     }
-    //   });
     const response = await fetch(`http://localhost/leadkku-api/information/InformationId.php?id=${id}`);
     const data = await response.json();
     console.log(data);
@@ -121,57 +112,23 @@ const Admin = () => {
       formData.append("file", fileNew);
 
       //delete file old 
-      await fetch(`http://localhost/leadkku-api/file/index.php?filename=${fileName}`,
-        { method: 'DELETE' }
-      )
+      fetch(`http://localhost/leadkku-api/file/index.php?filename=${fileName}`, { method: 'DELETE' })
 
-
-
-      //upload new file
-      // await axios.post(
-      //   `${import.meta.env.VITE_BASE_URL}/file/index.php`,
-      //   formData,
-      //   {
-      //     onUploadProgress: (event) => {
-      //       setProgressBar(Math.round((100 * event.loaded) / event.total));
-
-      //       if (event.loaded === event.total) {
-      //         Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
-      //         handleClose();
-      //         setProgressBar(0);
-      //       }
-      //     },
-      //   }
-      // ).then(res => {
-      //   pathname = res.data.path;
-      //   console.log(res)
-      // })
-
-      try {
-        await fetch("http://localhost/leadkku-api/file/index.php", {
-          method: "POST",
-          body: formData,
-          onUploadProgress: (event) => {
-            setProgressBar(Math.round((100 * event.loaded) / event.total));
-            if (event.loaded === event.total) {
-              Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
-            }
-          }
-        }).then(respone => respone.json())
-          .then((data) => {
-            console.log(data)
-            pathname = data.path
-          }
-
-          )
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      await fetch("http://localhost/leadkku-api/file/index.php", {
+        method: "POST",
+        body: formData
+      }).then(respone => respone.json())
+        .then((data) => {
+          console.log(data)
+          pathname = data.path
+        }
+        )
 
       const body = {
         sources: pathname,
 
       };
+
       //update information again 
 
       await fetch(`http://localhost/leadkku-api/information/updatefile.php?id=${forId}`,
@@ -181,7 +138,11 @@ const Admin = () => {
           },
           method: "PUT", body: JSON.stringify(body)
         }
-      );
+      ).then((res) => {
+        if (res.status === 200) {
+          Swal.fire("แก้ไข", "แก้ไขข้อมูลสำเร็จ", "success");
+        }
+      })
 
 
     } else {
@@ -219,7 +180,7 @@ const Admin = () => {
     const body = { subname: subNameUpdate };
     await axios
       .put(
-        `${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?id=${subId}`,
+        `http://localhost/leadkku-api/subinformationType/index.php?id=${subId}`,
         body
       )
       .then((response) => {
@@ -244,8 +205,7 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${id}`, { method: 'DELETE' })
-          .then(response => response.json())
+        fetch(`http://localhost/leadkku-api/information/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูลสำเร็จ", "success");
@@ -254,8 +214,8 @@ const Admin = () => {
           });
 
         //delete file 
-        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${path}`, { method: 'DELETE' })
-        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${poster}`, { method: 'DELETE' })
+        fetch(`http://localhost/leadkku-api/file/index.php?filename=${path}`, { method: 'DELETE' })
+        fetch(`http://localhost/leadkku-api/file/index.php?filename=${poster}`, { method: 'DELETE' })
       }
 
 
@@ -274,8 +234,7 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?id=${id}`)
+        fetch(`http://localhost/leadkku-api/subinformationType/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูล!", "ลบข้อมูลสำเร็จ", "success");
@@ -299,8 +258,8 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${import.meta.env.VITE_BASE_URL}/informationType/index.php?id=${id}`)
+
+        fetch(`http://localhost/leadkku-api/informationType/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูล!", "ลบข้อมูลสำเร็จ", "success");
@@ -362,7 +321,7 @@ const Admin = () => {
 
   //ดึงข้อมูลประเภทย่อยจาก id
   const getsubInformationID = async (id) => {
-
+    console.log(id)
     setTypeName(id);
     // await axios
     //   .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`)
@@ -390,10 +349,12 @@ const Admin = () => {
   const addSubtype = async () => {
 
     if (subNameType !== "") {
-      const body = { informationTypeId: typeName, subname: subNameType };
-      await fetch(`http://localhost/subinformationType/index.php`,
-        { method: 'POST', body: body })
-        .then(response => response.json())
+      const body = { informationTypeId: typeName || informationType[0].InformationTypeId, subname: subNameType };
+      await fetch(`http://localhost/leadkku-api/subinformationType/index.php`,
+        {
+          method: 'POST',
+          body: JSON.stringify(body)
+        })
         .then((res) => {
           if (res.status === 200) {
             Swal.fire({
@@ -403,7 +364,13 @@ const Admin = () => {
             });
           }
         });
-      await getsubInformationID(typeName);
+      await getsubInformationID(typeName || informationType[0].InformationTypeId);
+    } else {
+      Swal.fire({
+        icon: "success",
+        title: "กรุณากรอกข้อมูลก่อนบันทึก",
+        showConfirmButton: false,
+      });
     }
 
   };
@@ -413,9 +380,8 @@ const Admin = () => {
     if (inforName !== "") {
       const body = { typeName: inforName };
 
-      await fetch(`http://localhost/informationType/index.php`,
-        { method: 'POST', body: body })
-        .then(response = response.json())
+      await fetch(`http://localhost/leadkku-api/informationType/index.php`,
+        { method: 'POST', body: JSON.stringify(body) })
         .then((res) => {
           if (res.status === 200) {
             Swal.fire({
@@ -598,7 +564,7 @@ const Admin = () => {
                         </Col>
                         <Col>
                           <Button
-                            type="submit"
+
                             onClick={() => addInformationType()}
                             variant="primary"
                             style={{ marginTop: "32px" }}
@@ -703,7 +669,7 @@ const Admin = () => {
                         </Col>
                         <Col>
                           <Button
-                            type="submit"
+
                             onClick={() => addSubtype()}
                             variant="primary"
                             style={{ marginTop: "32px" }}
@@ -807,13 +773,14 @@ const Admin = () => {
                     </>
                   )}
 
-                  <Form.Label>อัพโหลดไฟล์ใหม่</Form.Label>
+                  {/* <Form.Label>อัพโหลดไฟล์ใหม่</Form.Label>
                   <Form.Control
                     type="file"
                     placeholder="ไฟล์ใหม่"
                     onChange={(e) => setFileNew(e.target.files[0])}
-                  />
+                  /> */}
                 </Form.Group>
+                
               </Col>
 
               <Col sm={12}>

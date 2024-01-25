@@ -21,7 +21,7 @@ const Upload = (props) => {
   const [informationName, setinformationName] = useState("");
   const [detail, setDetail] = useState("");
 
-
+  const [uploadStatus,setUploadStatus] = useState(false);
 
   //ชื่อหมวดหมู่
   const [typeName, setTypeName] = useState([]);
@@ -35,6 +35,8 @@ const Upload = (props) => {
   const [progressBar, setProgressBar] = useState(0);
 
   const [message, setMessage] = useState(false);
+  const [msg, setMsg] = useState("");
+
   const inputFile = useRef(null);
   const [errorMsg, setErrorMsg] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -191,19 +193,21 @@ const Upload = (props) => {
     //     }
     //   });
     try {
+      setUploadStatus(true)
+      setMsg("กำลังอัพโหลด") 
       await fetch("http://localhost/leadkku-api/file/index.php", {
         method: "POST",
         body: formData,
-        onUploadProgress: (event) => {
-          setProgressBar(Math.round((100 * event.loaded) / event.total));
-          if (event.loaded === event.total) {
-            Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
-          }
-        }
-      }).then(respone => respone.json())
+        
+       
+        
+      }
+      ).then(respone => respone.json())
         .then((data) => {
           console.log(data)
-          pathPoster = data.path
+          pathFile = data.path
+         
+          setMsg("อัพโหลดสำเร็จ") 
         }
 
         )
@@ -263,15 +267,19 @@ const Upload = (props) => {
 
     
     try {
-      fetch("http://localhost/leadkku-api/information/index.php", {
+    await  fetch("http://localhost/leadkku-api/information/index.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      }).then(respone => respone.json())
+      })
         .then((data) => {
-          console.log(data)
+          if(data.status===200){
+            Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
+            onUploaded();
+          }
+         
          
         }
         )
@@ -420,9 +428,12 @@ const Upload = (props) => {
             </Alert>
 
             <Form.Group className="mt-2">
-              {progressBar > 0 && (
+
+              {/* {progressBar > 0 && (
                 <ProgressBar className="mt-2" completed={progressBar} />
-              )}
+              )} */}
+              {uploadStatus===true && (<> <Alert>{msg}</Alert> </>)}
+
               <Form.Control
                 required
                 ref={inputFile}
@@ -435,7 +446,7 @@ const Upload = (props) => {
               />
             </Form.Group>
             <div className="message" onClick={onButtonClick}>
-              <CloudUploadIcon /> อัพโหลดไฟล์ขนาดไม่เกิน 100Mb
+              <CloudUploadIcon /> อัพโหลดไฟล์ขนาดไม่เกิน 48Mb
               {isSuccess ? (
                 <p className="success-message"> {message} </p>
               ) : null}
