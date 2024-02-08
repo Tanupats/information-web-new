@@ -94,7 +94,7 @@ const Admin = () => {
   //show modal for update information
   const handleShow = async (id) => {
     setForId(id);
-    const response = await fetch(`http://localhost/leadkku-api/information/InformationId.php?id=${id}`);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${id}`);
     const data = await response.json();
     console.log(data);
     setinformationName(data[0].informationName);
@@ -112,9 +112,9 @@ const Admin = () => {
       formData.append("file", fileNew);
 
       //delete file old 
-      fetch(`http://localhost/leadkku-api/file/index.php?filename=${fileName}`, { method: 'DELETE' })
+      fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${fileName}`, { method: 'DELETE' })
 
-      await fetch("http://localhost/leadkku-api/file/index.php", {
+      await fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php`, {
         method: "POST",
         body: formData
       }).then(respone => respone.json())
@@ -131,7 +131,7 @@ const Admin = () => {
 
       //update information again 
 
-      await fetch(`http://localhost/leadkku-api/information/updatefile.php?id=${forId}`,
+      await fetch(`${import.meta.env.VITE_BASE_URL}/information/updatefile.php?id=${forId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -151,7 +151,7 @@ const Admin = () => {
         informationName: informationName,
       };
 
-      fetch(`http://localhost/leadkku-api/information/index.php?id=${forId}`, {
+      fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${forId}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -176,11 +176,12 @@ const Admin = () => {
   };
 
   //update sub name
-  const updateSubName = async () => {
+  const updateSubName = async (e) => {
+    e.preventDefault();
     const body = { subname: subNameUpdate };
     await axios
       .put(
-        `http://localhost/leadkku-api/subinformationType/index.php?id=${subId}`,
+        `${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?id=${subId}`,
         body
       )
       .then((response) => {
@@ -205,7 +206,7 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost/leadkku-api/information/index.php?id=${id}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูลสำเร็จ", "success");
@@ -214,8 +215,8 @@ const Admin = () => {
           });
 
         //delete file 
-        fetch(`http://localhost/leadkku-api/file/index.php?filename=${path}`, { method: 'DELETE' })
-        fetch(`http://localhost/leadkku-api/file/index.php?filename=${poster}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${path}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php?filename=${poster}`, { method: 'DELETE' })
       }
 
 
@@ -234,7 +235,7 @@ const Admin = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost/leadkku-api/subinformationType/index.php?id=${id}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูล!", "ลบข้อมูลสำเร็จ", "success");
@@ -259,7 +260,7 @@ const Admin = () => {
     }).then((result) => {
       if (result.isConfirmed) {
 
-        fetch(`http://localhost/leadkku-api/informationType/index.php?id=${id}`, { method: 'DELETE' })
+        fetch(`${import.meta.env.VITE_BASE_URL}/informationType/index.php?id=${id}`, { method: 'DELETE' })
           .then((res) => {
             if (res.status === 200) {
               Swal.fire("ลบข้อมูล!", "ลบข้อมูลสำเร็จ", "success");
@@ -273,47 +274,21 @@ const Admin = () => {
 
   //ดึงข้อมูลกลุ่มสารสนเทศ
   const getInformationType = async () => {
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setInformationType(res.data);
-    //     }
-    //   });
-    const response = await fetch("http://localhost/leadkku-api/informationType/index.php");
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`);
     const data = await response.json();
     setInformationType(data);
   };
 
   //ดึงข้อมูลสารสนเทศทั้งหมด
   const getAllInformations = async () => {
-
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setInformations(res.data);
-    //     }
-    //   });
-
-    const response = await fetch("http://localhost/leadkku-api/information/index.php");
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php`);
     const data = await response.json();
     setInformations(data);
-
   };
 
   //ดึงข้อมูลประเภทย่อยทั้งหมด
   const getsubInformation = async () => {
-
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setType(res.data);
-    //     }
-    //   });
-
-    const response = await fetch("http://localhost/leadkku-api/subinformationType/index.php");
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`);
     const data = await response.json();
     setType(data);
 
@@ -323,18 +298,9 @@ const Admin = () => {
   const getsubInformationID = async (id) => {
     console.log(id)
     setTypeName(id);
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setType(res.data);
-    //     }
-    //   });
-
-    const response = await fetch(`http://localhost/leadkku-api/subinformationType/informationTypeId.php?id=${id}`);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/subinformationType/informationTypeId.php?id=${id}`);
     const data = await response.json();
     setType(data);
-
   };
 
   //เลือกเมนูต่าง ๆ
@@ -346,11 +312,12 @@ const Admin = () => {
   };
 
   //เพิ่มข้อมูลประเภทย่อย ในหมวดหมู่
-  const addSubtype = async () => {
+  const addSubtype = async (e) => {
 
+    e.preventDefault();
     if (subNameType !== "") {
       const body = { informationTypeId: typeName || informationType[0].InformationTypeId, subname: subNameType };
-      await fetch(`http://localhost/leadkku-api/subinformationType/index.php`,
+      await fetch(`${import.meta.env.VITE_BASE_URL}/subinformationType/index.php`,
         {
           method: 'POST',
           body: JSON.stringify(body)
@@ -373,14 +340,16 @@ const Admin = () => {
       });
     }
 
+    setsubNameType()
   };
 
   //เพิ่มหมวดหมู่สารสนเทศ
-  const addInformationType = async () => {
+  const addInformationType = async (e) => {
+    e.preventDefault();
     if (inforName !== "") {
       const body = { typeName: inforName };
 
-      await fetch(`http://localhost/leadkku-api/informationType/index.php`,
+      await fetch(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`,
         { method: 'POST', body: JSON.stringify(body) })
         .then((res) => {
           if (res.status === 200) {
@@ -392,7 +361,7 @@ const Admin = () => {
             });
           }
         });
-
+      setInforName("")
       await getInformationType();
     }
   };
@@ -405,7 +374,7 @@ const Admin = () => {
   }, []);
 
   useEffect(() => {
-    setSelectMenu("upload");
+    setSelectMenu("informations");
     getInformationType();
     getAllInformations();
     getsubInformation();
@@ -414,23 +383,24 @@ const Admin = () => {
   useEffect(() => { }, [informations]);
 
   return (
-    <div>
+    <div style={{ marginBottom: '200px' }}>
       <Container fluid>
         <Row>
           <Col sm={3} id="sidebar-wrapper">
             <Nav className="d-md-block  sidebar">
               <div className="profile p-4 text-center">
                 <Image
+
                   style={{ width: "80px", height: "80px", objectFit: "cover" }}
                   src={
                     `${import.meta.env.VITE_BASE_URL}/${localStorage.getItem("profile")}`
                   }
                 />
-                <h6>{localStorage.getItem("name")}</h6>
+                <h6> ผู้ใช้ : {localStorage.getItem("name")}</h6>
               </div>
 
               <Nav.Item onClick={() => onSelectMenu("upload")}>
-                <Nav.Link style={{ color: "#fff" }}>
+                <Nav.Link style={{ color: "#fff", width: '100%' }}>
                   {" "}
                   <MmsIcon /> อัพโหลดสารสนเทศ
                 </Nav.Link>
@@ -473,65 +443,68 @@ const Admin = () => {
                       {" "}
                       <h5>ข้อมูลสารสนเทศทั้งหมด</h5>{" "}
                     </div>
-                    <Table bordered hover className="mt-4">
-                      <thead>
-                        <tr>
-                          <th>ตัวอย่าง</th>
-                          <th>ชื่อเรื่อง</th>
-                          <th>ประเภท</th>
-                          <th>รายละเอียด</th>
-                          <th>จัดการ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {informations?.map((data) => {
-                          return (
-                            <tr key={data.informationId}>
-                              <td style={{ width: "260px" }}>
-                                <FileViewers
-                                  src={data.sources}
-                                  type={data.fileType}
-                                  poster={data?.poster}
-                                />
-                              </td>
-                              <td>{data.informationName}</td>
-                              <td>{data.subname}</td>
-                              <td> {data.detail}</td>
 
-                              <td>
-                                <Row>
-                                  <Col sm={6}>
-                                    <Button
-                                      style={{ color: "#fff" }}
-                                      onClick={() =>
-                                        handleShow(data.informationId)
-                                      }
-                                      variant="warning"
-                                    >
-                                      <EditIcon />
-                                    </Button>{" "}
-                                  </Col>
-                                  <Col sm={6}>
-                                    <Button
-                                      onClick={() =>
-                                        deleteInformationId(
-                                          data.informationId,
-                                          data.sources,
-                                          data.poster
-                                        )
-                                      }
-                                      variant="danger"
-                                    >
-                                      <DeleteIcon />
-                                    </Button>
-                                  </Col>
-                                </Row>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </Table>
+                    <Row className="mt-3">
+                      {
+                        informations.map((data) => {
+
+                          return (<>
+                            <Col md={4}>
+                              <Card className="mb-2">
+                                <Card.Body>
+                                  <Card.Title> {data.informationName}</Card.Title>
+                                  <FileViewers
+                                    className="infor-item"
+                                    src={data.sources}
+                                    type={data.fileType}
+                                    poster={data.poster}
+                                  />
+                                  <br />
+                                  <span className="mt-4">รายละเอียด :  {data.detail} </span><br />
+                                  <span>หมวดหมู่ :  {data.subname} </span><br />
+                                  <span>กลุ่มเนื้อหา :  {data.groupName} </span><br />
+                                  <span>ประเภทสารสนเทศ :  {data.fileType} </span><br />
+                                  <Row className="mt-4">
+                                    <Col sm={6} xs={6}>
+                                      <Button
+                                        style={{ color: "#fff" }}
+                                        onClick={() =>
+                                          handleShow(data.informationId)
+                                        }
+                                        variant="warning"
+                                      >
+                                        <EditIcon />
+                                      </Button>
+                                    </Col>
+                                    <Col sm={6} xs={6}>
+                                      <Button
+                                        style={{ marginLeft: '10px' }}
+                                        onClick={() =>
+                                          deleteInformationId(
+                                            data.informationId,
+                                            data.sources,
+                                            data.poster
+                                          )
+                                        }
+                                        variant="danger"
+                                      >
+                                        <DeleteIcon />
+                                      </Button>
+                                    </Col>
+                                  </Row>
+
+                                </Card.Body>
+
+
+                              </Card>
+
+                            </Col>
+
+                          </>)
+                        })
+                      }
+
+                    </Row>
 
                     {informations.length === 0 && (
                       <Alert className="text-center" variant="primary">
@@ -545,12 +518,12 @@ const Admin = () => {
                   <>
                     <div className="text-center">
                       {" "}
-                      <h5>ตารางแสดงข้อมูลหมวดหมู่สารสนเทศ</h5>{" "}
+                      <h5>ข้อมูลหมวดหมู่สารสนเทศ</h5>{" "}
                     </div>
 
-                    <Form>
-                      <Row className="d-flex">
-                        <Col sm={4}>
+                    <Form onSubmit={(e) => addInformationType(e)}>
+                      <Row>
+                        <Col sm={4} xs={6}>
                           <Form.Group>
                             <Form.Label>เพิ่มหมวดหมู่</Form.Label>
                             <Form.Control
@@ -562,10 +535,10 @@ const Admin = () => {
                             />
                           </Form.Group>
                         </Col>
-                        <Col>
+                        <Col sm={8} xs={6}>
                           <Button
 
-                            onClick={() => addInformationType()}
+                            type="submit"
                             variant="primary"
                             style={{ marginTop: "32px" }}
                           >
@@ -576,10 +549,10 @@ const Admin = () => {
                         </Col>
                       </Row>
                     </Form>
-                    <Table bordered hover className="mt-4">
+                    <Table responsive bordered hover className="mt-4">
                       <thead>
                         <tr>
-                          <th>ID</th>
+
                           <th>หมวดหมู่</th>
                           <th>จัดการ</th>
                         </tr>
@@ -588,11 +561,10 @@ const Admin = () => {
                         {informationType?.map((data) => {
                           return (
                             <tr key={data.InformationTypeId}>
-                              <td>{data.InformationTypeId}</td>
                               <td>{data.typeName}</td>
                               <td>
                                 <Row>
-                                  <Col>
+                                  <Col xs={6}>
                                     <Button
                                       style={{ color: "#fff" }}
                                       onClick={() =>
@@ -603,10 +575,10 @@ const Admin = () => {
                                       }
                                       variant="warning"
                                     >
-                                      <EditIcon /> แก้ไข
+                                      <EditIcon />
                                     </Button>{" "}
                                   </Col>
-                                  <Col>
+                                  <Col xs={6}>
                                     <Button
                                       onClick={() =>
                                         deleteInformationType(
@@ -615,7 +587,7 @@ const Admin = () => {
                                       }
                                       variant="danger"
                                     >
-                                      <DeleteIcon /> ลบ
+                                      <DeleteIcon />
                                     </Button>
                                   </Col>
                                 </Row>
@@ -632,13 +604,13 @@ const Admin = () => {
                   <>
                     <div className="text-center">
                       {" "}
-                      <h5>ตารางแสดงข้อมูลประเภทสารสนเทศ</h5>{" "}
+                      <h5>ข้อมูลประเภทสารสนเทศ</h5>{" "}
                     </div>
 
-                    <Form className="mt-4">
-                      <Row>
-                        <Col sm={4}>
-                          <Form.Group>
+                    <Form className="mt-4" onSubmit={(e) => addSubtype(e)}>
+                      <Row >
+                        <Col sm={4} xs={12}>
+                          <Form.Group className="mt-4">
                             <Form.Label>เลือกหมวดหมู่สารสนเทศ </Form.Label>
                             <Form.Select
                               onChange={(e) =>
@@ -655,8 +627,8 @@ const Admin = () => {
                             </Form.Select>
                           </Form.Group>
                         </Col>
-                        <Col sm={4}>
-                          <Form.Group>
+                        <Col sm={4} xs={12}>
+                          <Form.Group className="mt-4">
                             <Form.Label>เพิ่มประเภทสารสนเทศ</Form.Label>
                             <Form.Control
                               required
@@ -667,25 +639,25 @@ const Admin = () => {
                             />
                           </Form.Group>
                         </Col>
-                        <Col>
+                        <Col sm={4}   xs={12}>
                           <Button
+                            type="submit"
 
-                            onClick={() => addSubtype()}
                             variant="primary"
-                            style={{ marginTop: "32px" }}
+                            style={{ marginTop: "55px" }}
                           >
                             {" "}
 
-                            <AddCircleOutlineIcon />    เพิ่มข้อมูล{" "}
+                            <AddCircleOutlineIcon />    เพิ่มข้อมูลเภทสารสนเทศ{" "}
                           </Button>
                         </Col>
                       </Row>
                     </Form>
 
-                    <Table bordered hover className="mt-4">
+                    <Table responsive hover className="mt-4">
                       <thead>
                         <tr>
-                          <th>ID</th>
+
                           <th>ประเภท</th>
                           <th>จัดการ</th>
                         </tr>
@@ -694,13 +666,14 @@ const Admin = () => {
                         {subType?.map((data) => {
                           return (
                             <tr key={data.subInformationId}>
-                              <td>{data.subInformationId}</td>
+
                               <td>{data.subname}</td>
                               <td>
                                 <Row>
-                                  <Col>
+                                  <Col xs={6}>
                                     <Button
-                                      style={{ color: "#fff" }}
+
+                                      style={{ color: "#fff", width: 'auto' }}
                                       onClick={() =>
                                         handleShowInfor(
                                           data.subInformationId,
@@ -709,11 +682,12 @@ const Admin = () => {
                                       }
                                       variant="warning"
                                     >
-                                      <EditIcon /> แก้ไข
+                                      <EditIcon />
                                     </Button>{" "}
                                   </Col>
-                                  <Col>
+                                  <Col xs={6}>
                                     <Button
+                                      style={{ marginLeft: '8px' }}
                                       onClick={() =>
                                         deleteSubInformationId(
                                           data.subInformationId
@@ -721,7 +695,7 @@ const Admin = () => {
                                       }
                                       variant="danger"
                                     >
-                                      <DeleteIcon /> ลบ
+                                      <DeleteIcon />
                                     </Button>
                                   </Col>
                                 </Row>
@@ -780,7 +754,7 @@ const Admin = () => {
                     onChange={(e) => setFileNew(e.target.files[0])}
                   /> */}
                 </Form.Group>
-                
+
               </Col>
 
               <Col sm={12}>
@@ -814,7 +788,9 @@ const Admin = () => {
           <Modal.Title>แก้ไขประเภทสารสนเทศ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form
+            id="update-sub"
+            onSubmit={(e) => updateSubName(e)}>
             <Row className="mt-4">
               <Col sm={12}>
                 <Form.Group className="mb-4">
@@ -831,7 +807,10 @@ const Admin = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={() => updateSubName()}>
+          <Button
+            form="update-sub"
+            type="submit"
+            variant="success">
             แก้ไข
           </Button>
           <Button variant="danger" onClick={handleCloseInfor}>

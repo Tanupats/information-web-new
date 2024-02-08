@@ -27,106 +27,46 @@ const Information = () => {
 
   //กลุ่มประเภทสารสนเทศ
   const getInformationType = async () => {
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setInformationType(res.data);
-    //     }
-    //   });
 
-      const response = await fetch(`http://localhost/leadkku-api/informationType/index.php`);
-      const data = await response.json();
-      console.log(data);
-      setInformationType(data);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/informationType/index.php`);
+    const data = await response.json();
+    setInformationType(data);
   };
 
 
   const getSubInformationType = async (id) => {
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/informationType/informationTypeId.php?id=${id}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       console.log(res.data)
-    //       setInforGroup(res.data);
-    //     }
-    //   });
-
-      const response = await fetch(`http://localhost/leadkku-api/informationType/informationTypeId.php?id=${id}`);
-      const data = await response.json();
-      console.log(data);
-      setInforGroup(data);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/informationType/informationTypeId.php?id=${id}`);
+    const data = await response.json();
+    setInforGroup(data);
   };
 
 
   const getAllInformations = async () => {
     setInforGroup([]);
-
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/index.php`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setData(res.data);
-    //     }
-    //   });
-
-    const response = await fetch("http://localhost/leadkku-api/information/index.php");
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php`);
     const movies = await response.json();
-    console.log(movies);
     setData(movies);
 
   };
 
 
   const searchInformation = async () => {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${searchName}`);
+    const data = await response.json();
+    setData(data);
 
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/searchKey.php?key=${searchName}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setData(res.data);
-    //     }
-    //   });
-
-      const response = await fetch(`http://localhost/leadkku-api/information/searchKey.php?key=${searchName}`);
-      const data = await response.json();
-      console.log(data);
-      setData(data);
-  
   };
-
-
 
   const searchByInformation = async (subname) => {
-    // await axios
-    //   .get(
-    //     `${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${subname}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setData(res.data);
-    //     }
-    //   });
-      const response = await fetch(`http://localhost/leadkku-api/information/searchByInformation.php?subname=${subname}`);
-      const data = await response.json();
-      console.log(data);
-      setData(data);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/searchByInformation.php?subname=${subname}`);
+    const data = await response.json();
+    setData(data);
   };
 
-
   const filterByGroup = async (groupname) => {
-
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${groupname}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setData(res.data);
-    //     }
-    //   });
-      const response = await fetch(`http://localhost/leadkku-api/information/filterGroup.php?group=${groupname}`);
-      const data = await response.json();
-      console.log(data);
-      setData(data);
-
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/filterGroup.php?group=${groupname}`);
+    const data = await response.json();
+    setData(data);
   };
 
 
@@ -153,7 +93,7 @@ const Information = () => {
   return (
     <>
       <Container fluid>
-        <Card style={{ borderRadius: "0px", marginBottom: "60px" }}>
+        <Card style={{ borderRadius: "0px", marginBottom: "60px",background:'none' }}>
           <Card.Body style={{ padding: "12px" }}>
             {informationType.length > 0 && (
               <>
@@ -288,11 +228,13 @@ const Information = () => {
                 <>
                   {data?.map((data) => {
                     return (
-                      <Col sm={3} className="mt-4">
+                      <Col sm={3} className="mt-4"  onClick={() =>
+                        navigate(`/detail/${data.informationId}`)
+                      }>
                         <Card
                           style={{
                             padding: "0px",
-                            borderRadius: "8px",
+                           
                             height: "auto",
                           }}
                           className="mt-4"
@@ -300,51 +242,35 @@ const Information = () => {
                           <Card.Body style={{ padding: "0px" }}>
                             <Row>
                               <Col sm={12} className="p-0">
-                                {data.fileType === "วิดิโอ" && (
-                                  <FileViewers
-                                    className="infor-item"
-                                    src={data.sources}
-                                    type={data.fileType}
-                                    poster={data.poster}
-                                  />
-                                )}
 
-                                {data.fileType === "เอกสาร" && (
-                                  <Image
-                                    style={{
-                                      width: "60%",
-                                      height: "100%",
-                                      marginTop: "12px",
-                                    }}
-                                    className="infor-item"
-                                    src="google-docs.png"
-                                  />
-                                )}
 
-                                {data.fileType === "รูปภาพ" && (
-                                  <FileViewers
-                                    className="infor-item"
-                                    src={data.sources}
-                                    type={data.fileType}
-                                  />
-                                )}
+                                <FileViewers
+                                  className="infor-item"
+                                  src={data.sources}
+                                  type={data.fileType}
+                                  poster={data.poster}
+                                />
+
+
+
                               </Col>
                               <div
-                                className="mt-4 mb-4"
-                                onClick={() =>
-                                  navigate(`/detail/${data.informationId}`)
-                                }
+                                className="mt-3"
+                               
                               >
                                 <h5
                                   onClick={() =>
                                     navigate(`/detail/${data.informationId}`)
                                   }
                                 >
-                                  {" "}
+                                 
                                   {data.informationName}
                                 </h5>
-                                <p> {data.detail} </p>
-                                <div className="mt-2">
+                                <span>รายละเอียด :  {data.detail} </span><br/>
+                                <span>หมวดหมู่ :  {data.subname} </span><br/>
+                                <span>กลุ่มเนื้อหา :  {data.groupName} </span><br/>
+                                <span>ประเภทสารสนเทศ :  {data.fileType} </span><br/>
+                                <div className="mt-2 mb-2">
                                   <CalendarMonthIcon />
                                   {` ${new Date(
                                     data.dateTime

@@ -3,6 +3,7 @@
   margin: 0 ;
   padding: 0 ;
   box-sizing: border-box;
+ 
 }body{
   font-family: 'Kanit', sans-serif;
   background-color: #F8F8F8;
@@ -18,6 +19,7 @@ div.row {
 }
 .footer{
 
+  margin-top: 60px;
   color: #fff;
   background-color: #673382;
 }

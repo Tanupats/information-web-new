@@ -15,24 +15,18 @@ const InforDetail = () => {
   const [data, setData] = useState({});
 
   function downloadURI(uri, name) {
-    var link = document.createElement("a");
-    link.download = name;
-    link.href = `${import.meta.env.VITE_BASE_URL}/${uri}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
+    if (uri !== "") {
+      var link = document.createElement("a");
+      link.download = name;
+      link.href = `${import.meta.env.VITE_BASE_URL}/${uri}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 
   const getOneInformation = async () => {
-    // await axios
-    //   .get(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${informationId}`)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setData(...res.data);
-    //     }
-    //   });
-    const response = await fetch(`http://localhost/leadkku-api/information/InformationId.php?id=${informationId}`);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/information/InformationId.php?id=${informationId}`);
     const data = await response.json();
     console.log(data);
     setData(...data);
@@ -56,8 +50,9 @@ const InforDetail = () => {
               <div className="file-views">
 
                 {data.fileType === "เอกสาร" && (
-                  <Image src='google-docs.png' style={{ width: '100%' }} />
+                  <Image src={`${import.meta.env.VITE_BASE_URL}/${data.poster}`} style={{ width: '100%' }} />
                 )}
+
                 {data.fileType === "วิดิโอ" && (
 
                   <FileViewers src={data.sources} type={data.fileType} poster={data.poster} />

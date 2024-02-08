@@ -7,10 +7,11 @@ const ModalGroup = (props) => {
   const [name, setName] = useState("")
   const { Id } = props;
   //update groupName    
-  const updateGroup = async () => {
+  const updateGroup = async (e) => {
+    e.preventDefault();
     props.onHide();
     const body = { typeName: name }
-    await fetch(`http://localhost/leadkku-api/informationType/index.php?id=${Id}`,
+    await fetch(`${import.meta.env.VITE_BASE_URL}/informationType/index.php?id=${Id}`,
       {
         method: 'PUT',
         body: JSON.stringify(body)
@@ -38,7 +39,7 @@ const ModalGroup = (props) => {
           <Modal.Title>แก้ไขหมวดหมู่</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form id="update-group" onSubmit={(e)=>updateGroup(e)}>
             <Row className="mt-4">
               <Col sm={12}>
                 <Form.Group className="mb-4">
@@ -55,7 +56,10 @@ const ModalGroup = (props) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={() => updateGroup()}>
+          <Button 
+          type="submit"
+          form="update-group"
+          variant="success">
             บันทึก
           </Button>
           <Button variant="danger" onClick={props.onHide}>

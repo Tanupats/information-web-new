@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Row, Form, Button, Image, Alert } from "react-bootstrap";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
@@ -8,90 +8,97 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [profile, setProfile] = useState("img-profile");
+  const [profile, setProfile] = useState("");
   const [role, setRole] = useState("student");
   const [roleStudent, setRoleStudent] = useState(true);
   const [roleTeacher, setroleTeacher] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [img, setImg] = useState("");
-
+  const [emailCheck, setEmailCheck] = useState(null);
 
   let path = "";
   const uploadProfile = async () => {
 
-    let formData = new FormData();
-    formData.append("file", profile);
+    if (profile) {
 
-    // await axios.post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData)
-    //   .then((res) => {
-    //     path = res.data.path
-    //     console.log(res)
-    //   })
+      let formData = new FormData();
+      formData.append("file", profile);
 
-    try {
-      await fetch("http://localhost/leadkku-api/file/index.php", {
-        method: "POST",
-        body: formData,
-      }).then(respone => respone.json())
-        .then((data) => {
-          console.log(data)
-          path = data.path
-        }
+      try {
+        await fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php`, {
+          method: "POST",
+          body: formData,
+        }).then(respone => respone.json())
+          .then((data) => {
+            console.log(data)
+            path = data.path
+          }
 
-        )
-    } catch (error) {
-      console.error("Error:", error);
+          )
+      } catch (error) {
+
+        console.error("Error:", error);
+      }
     }
+  }
+  const validateEmail = (email) => {
+    // สร้าง Regular Expression ที่รับเฉพาะภาษาอังกฤษ
+    var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
+    // ใช้ test() เพื่อตรวจสอบว่าอีเมลผ่าน Regex หรือไม่
+    return regex.test(email);
   }
 
+  const handleEmail = (val) => {
+    setEmail(val)
+    let validEmail = validateEmail(val)
+    console.log(validEmail)
+    setEmailCheck(validEmail);
+  }
 
   const add = async () => {
 
-    await uploadProfile()
-    const body = {
-      name: name,
-      email: email,
-      profile: path,
-      password: password,
-      role: role,
-      systemName: "information"
-    }
+    if (emailCheck) {
 
-    // axios
-    //   .post(`${import.meta.env.VITE_BASE_URL}/users/index.php`, body)
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       navigae('/login')
-    //     }
-    //   })
-    try {
-      await fetch("http://localhost/leadkku-api/users/index.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }).then(respone => respone.json())
-        .then((data) => {
-          console.log(data)
-          if (data) {
+      await uploadProfile()
+      const body = {
+        name: name,
+        email: email,
+        profile: path,
+        password: password,
+        role: role,
+        systemName: "information"
+      }
+
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/users/index.php`,
+        body
+      )
+        .then(data => {
+
+          if (data.status === 200) {
             navigae('/login')
           }
         }
 
-
-        )
-    } catch (error) {
-      console.error("Error:", error);
+        ).catch(err => {
+          setErrMsg(err)
+        })
     }
 
+
+
   };
+
+
 
   const handelUpload = (e) => {
     setImg(URL.createObjectURL(e.target.files[0]));
     setProfile(e.target.files[0]);
   };
+
+  useEffect(() => {
+
+  }, [errMsg])
 
   return (
     <div>
@@ -113,9 +120,9 @@ const Register = () => {
                     </div>
                   )}
 
-                  <Form.Control type="file" onChange={(e) => handelUpload(e)} ></Form.Control>
+                  <Form.Control type="file" onChange={(e) => handelUpload(e)} required></Form.Control>
                   <Form.Group className="mb-2">
-                    <Form.Label>ชื่อ-นามสกุล</Form.Label>
+                    <Form.Label className="mt-2">ชื่อ-นามสกุล (ภาษาไทย หรือภาษาอังกฤษ)</Form.Label>
                     <Form.Control
                       value={name}
                       type="text"
@@ -126,12 +133,15 @@ const Register = () => {
                   </Form.Group>
                   <Form.Group className="mb-2">
                     <Form.Label>อีเมล</Form.Label>
+                    {
+                      emailCheck === false && (<> <p style={{ color: 'red' }}> *กรุณากรอกอีเมลให้ถูกต้องตามรูปแบบ</p></>)
+                    }
                     <Form.Control
                       type="email"
                       value={email}
                       placeholder="Email"
                       required
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => handleEmail(e.target.value)}
                     />
                   </Form.Group>
 
@@ -148,9 +158,13 @@ const Register = () => {
                   {errMsg !== "" && (
                     <Alert variant="danger" className="mt-4">อีเมล หรือผู้ใช้นี้ได้ลงทะเบียนเรียบร้อยแล้ว</Alert>
                   )}
-                  <Form.Group className="mt-2">
-                    <Form.Label>เลือกประเภทผู้ใช้</Form.Label>
+                  <Form.Label className="mt-2">เลือกประเภทผู้ใช้</Form.Label> {" "}
+                  <Form.Group
+
+                    className="mt-2 d-flex">
+
                     <Form.Check
+                      style={{ marginRight: '12px' }}
                       onClick={() => {
                         setRoleStudent(true);
                         setRole("student");
@@ -160,7 +174,7 @@ const Register = () => {
                       value={roleStudent}
                       type="radio"
                       label="student"
-                    ></Form.Check>
+                    ></Form.Check> {" "}
                     <Form.Check
                       onClick={() => {
                         setroleTeacher(true);
@@ -175,6 +189,7 @@ const Register = () => {
                   </Form.Group>
 
                 </Form>
+
                 <Button
                   type="submit"
                   variant="primary"
@@ -183,6 +198,11 @@ const Register = () => {
                 >
                   ลงทะเบียน
                 </Button>
+                <hr />
+                <div className="text-center">
+
+                  <a href="/login">ถ้ามีบัญชีผู้ใช้อยู่แล้ว คลิกเข้าสู่ระบบ</a>
+                </div>
               </Col>
             </Row>
           </div>

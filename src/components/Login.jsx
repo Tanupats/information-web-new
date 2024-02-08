@@ -27,7 +27,7 @@ const Login = () => {
     };
 
     try {
-      await fetch("http://localhost/leadkku-api/login/index.php", {
+      await fetch(`${import.meta.env.VITE_BASE_URL}/login/index.php`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const Login = () => {
             localStorage.setItem("name", data[0].name)
             localStorage.setItem("profile", data[0].profile)
             localStorage.setItem("role", data[0].role)
-            localStorage.setItem("auth","loginged")
+            localStorage.setItem("auth", "loginged")
             if (data[0].role === "student") {
               navigae('/information')
             }
@@ -51,7 +51,7 @@ const Login = () => {
 
           }
           if (data.length === 0) {
-            setMessage("login false")
+            setMessage("ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง")
           }
         }
 
@@ -73,7 +73,7 @@ const Login = () => {
               <Col sm={6} className="p-0">
                 <Image
                   src="bg-login.png"
-                  style={{ width: "100%", height: "auto" }}
+                  style={{ width: "100%", height: "100%" }}
                 />
               </Col>
               <Col sm={6}>
@@ -102,7 +102,10 @@ const Login = () => {
                     />
                   </Form.Group>
 
-                  {message !== "" && (<Alert variant="danger" className="mt-4">{message}</Alert>)}
+                  {message !== "" && (<><Alert variant="danger" className="mt-4">{message}</Alert>
+                      <a href="/resetpassword">ลืมรหัสผ่าน ?</a>
+                  
+                  </>)}
 
 
 

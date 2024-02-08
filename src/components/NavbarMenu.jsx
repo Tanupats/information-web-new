@@ -16,6 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import ResetPassword from "./ResetPassword";
 function NavbarMenu() {
   const { isLogin, setIsLogin } = useContext(AuthData);
   let role = localStorage.getItem("role");
@@ -45,7 +46,7 @@ function NavbarMenu() {
                   marginLeft:'12px'
                 }}
               />{" "}
-            </Navbar.Brand>
+            </Navbar.Brand> 
 
             <Navbar.Toggle aria-controls="responsive-navbar-nav" style={{color:'#fff'}} />
             <Navbar.Collapse id="responsive-navbar-nav">
@@ -58,8 +59,8 @@ function NavbarMenu() {
                   สารสนเทศทั้งหมด
                 </Nav.Link>
               
-              </Nav>
-              <Nav>
+              </Nav> 
+               <Nav>
                 {isLogin === "loginged" && (
                   <>
                     {role === "admin" && (
@@ -92,21 +93,21 @@ function NavbarMenu() {
                     </Nav.Link>
                   </>
                 )}
-              </Nav>
+              </Nav> 
             </Navbar.Collapse>
           </Container>
         </Navbar>
 
-        <Routes basename={'/login'}>
+        <Routes>
           <Route path="/" Component={Home}></Route>
           <Route path="/admin" Component={Admin}></Route>
           <Route path="/login" Component={Login}></Route>
           <Route path="/register" Component={Register}></Route>
           <Route path="/information" Component={Information}></Route>
-          <Route path="/detail/:informationId" Component={InforDetail}></Route>
-         
+          <Route path="/detail/:informationId" Component={InforDetail}></Route>     
           <Route path="/docview" Component={Docview}></Route>
           <Route path="/docview/:Id" Component={Docview}></Route>
+          <Route path="/resetpassword" Component={ResetPassword}></Route>
         </Routes>
       </Router>
     </div>

@@ -21,7 +21,7 @@ const Upload = (props) => {
   const [informationName, setinformationName] = useState("");
   const [detail, setDetail] = useState("");
 
-  const [uploadStatus,setUploadStatus] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState(false);
 
   //ชื่อหมวดหมู่
   const [typeName, setTypeName] = useState([]);
@@ -97,9 +97,11 @@ const Upload = (props) => {
           setFile(file);
         } else if (fileExtension === "gif") {
           setFile(file);
-        } else if (fileExtension === "png" || fileExtension === "PNG") {
+        } else if (fileExtension === "png" || fileExtension === "PNG" || fileExtension === "jpeg") {
           setFile(file);
-        } else {
+        }
+        else {
+
           Swal.fire({
             icon: "success",
             title: "นามสกุลไฟล์ไม่รองรับสำหรับอัพโหลดรูปภาพ",
@@ -149,16 +151,9 @@ const Upload = (props) => {
 
       let formData = new FormData();
       formData.append("file", filePoster);
-      // await axios
-      //   .post(`https://www.sasirestuarant.com/leadkku-api/file/index.php`, formData)
-      //   .then((res) => {
-      //     if (res.status === 200) {
-      //       pathPoster = res.data.path;
-      //     }
-      //   });
 
       try {
-        await fetch("http://localhost/leadkku-api/file/index.php", {
+        await fetch(`${import.meta.env.VITE_BASE_URL}/file/index.php`, {
           method: "POST",
           body: formData,
         }).then(respone => respone.json())
@@ -177,46 +172,31 @@ const Upload = (props) => {
   const upInformation = async () => {
     let formData = new FormData();
     formData.append("file", file);
+    if (file) {
 
-    // await axios
-    //   .post(`https://www.sasirestuarant.com/leadkku-api/file/index.php`, formData, {
-    //     onUploadProgress: (event) => {
-    //       setProgressBar(Math.round((100 * event.loaded) / event.total));
-    //       if (event.loaded === event.total) {
-    //         Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
-    //       }
-    //     },
-    //   })
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       pathFile = res.data.path;
-    //     }
-    //   });
-    try {
-      setUploadStatus(true)
-      setMsg("กำลังอัพโหลด") 
-      await fetch("http://localhost/leadkku-api/file/index.php", {
-        method: "POST",
-        body: formData,
-        
-       
-        
-      }
-      ).then(respone => respone.json())
-        .then((data) => {
-          console.log(data)
-          pathFile = data.path
-         
-          setMsg("อัพโหลดสำเร็จ") 
-        }
+      await axios
+        .post(`${import.meta.env.VITE_BASE_URL}/file/index.php`, formData, {
+          onUploadProgress: (event) => {
+            setProgressBar(Math.round((100 * event.loaded) / event.total));
+            if (event.loaded === event.total) {
+              Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
+            }
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res)
+            pathFile = res.data.path;
+          }
+        });
 
-        )
-    } catch (error) {
-      console.error("Error:", error);
+
+
     }
 
 
   };
+
 
   const validateSelectedFile = (file) => {
     const MAX_FILE_SIZE = 48000; // 100MB
@@ -241,10 +221,9 @@ const Upload = (props) => {
 
   //บันทึกข้อมูลสารสนเทศ 
   const uploadInformation = async (e) => {
-    e.preventDefault()
 
+    e.preventDefault();
     await upInformation();
-
     await uploadPoster();
 
     const body = {
@@ -257,17 +236,8 @@ const Upload = (props) => {
       sources: pathFile,
     };
 
-    // await axios.post(`http://localhost/leadkku-api/information/index.php`, body)
-    //   .then(res => {
-    //     if (res.status === 200) {
-    //       onUploaded()
-    //     }
-    //   })
-    //   ;
-
-    
     try {
-    await  fetch("http://localhost/leadkku-api/information/index.php", {
+      await fetch(`${import.meta.env.VITE_BASE_URL}/information/index.php`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -275,12 +245,12 @@ const Upload = (props) => {
         body: JSON.stringify(body),
       })
         .then((data) => {
-          if(data.status===200){
+          if (data.status === 200) {
             Swal.fire("อัพโหลด", "อัพโหลดข้อมูลสำเร็จ", "success");
             onUploaded();
           }
-         
-         
+
+
         }
         )
     } catch (error) {
@@ -397,7 +367,7 @@ const Upload = (props) => {
           </Col>
 
           <Col sm={6}>
-            <Form.Group>
+            <Form.Group className="mt-2">
               <Form.Label>รายละเอียด</Form.Label>
               <Form.Control
                 required
@@ -410,7 +380,7 @@ const Upload = (props) => {
           </Col>
 
           <Col sm={6}>
-            <Form.Group>
+            <Form.Group className="mt-2">
               <Form.Label>เลือกประเภทไฟล์</Form.Label>
 
               <Form.Select onChange={(e) => setFileType(e.target.value)}>
@@ -422,17 +392,17 @@ const Upload = (props) => {
 
             <Alert className="support-files">
               <h5>นามสกุลไฟล์ที่รองรับ{fileType}</h5>
-              {fileType === "รูปภาพ" && <span>.JPG .PNG .GIF</span>}
+              {fileType === "รูปภาพ" && <span>.JPG .PNG .GIF .jpeg</span>}
               {fileType === "วิดิโอ" && <span>.mp4 .m4v .mov</span>}
               {fileType === "เอกสาร" && <span>.DOC .PDF .EXECL</span>}
             </Alert>
 
             <Form.Group className="mt-2">
 
-              {/* {progressBar > 0 && (
+              {progressBar > 0 && (
                 <ProgressBar className="mt-2" completed={progressBar} />
-              )} */}
-              {uploadStatus===true && (<> <Alert>{msg}</Alert> </>)}
+              )}
+              {uploadStatus === true && (<> <Alert>{msg}</Alert> </>)}
 
               <Form.Control
                 required
@@ -458,7 +428,7 @@ const Upload = (props) => {
             <Form.Group className="mt-2">
               <Form.Label>อัพโหลดหน้าปก (สำหรับเอกสาร และวิดิโอ)</Form.Label>
               <Image
-                style={{ width: "100%", height: "300px", objectFit: "cover" }}
+                style={{ width: "100%", height: "180px", objectFit: "cover" }}
                 src={img}
               />
 
@@ -472,7 +442,7 @@ const Upload = (props) => {
           </Col>
         </Row>
         <Row className="mt-4">
-          <Col sm={6}>
+          <Col sm={6} xs={6}>
 
             <Button variant="success w-100"
               type="submit"
@@ -481,7 +451,7 @@ const Upload = (props) => {
               บันทึกข้อมูล
             </Button>
           </Col>
-          <Col sm={6}>
+          <Col sm={6} xs={6}>
             <Button variant="danger w-100" onClick={() => cancelUpload()}>
               {" "}
               ยกเลิก

@@ -104,8 +104,8 @@ a .nav-link :hover{
 .message{
     color: #673382;
     cursor: pointer;
-    font-size: 20px;
-    margin-top: 20px;
+    font-size: 18px;
+    margin-top: 10px;
     border-radius: 12px;
     text-align: center;
     padding: 12px;
@@ -114,4 +114,3 @@ a .nav-link :hover{
     border: solid  #673382 2px;
     border-style: dashed;
 }
-
